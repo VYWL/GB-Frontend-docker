@@ -1,0 +1,30 @@
+{
+    "boardName": "비밀게시판",
+    "boardID": 2,
+    "data": [
+        {
+            "boardID": 2,
+            "articleID": 1,
+            "title": "멈춰~!~!",
+            "content": "과제 때문에 잠을 못자... \n계산기 멈춰 ✋✋",
+            "timestamp": "07/26 01:45",
+            "vote": 0,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 2,
+            "articleID": 2,
+            "title": "그거 알음?",
+            "content": "이거 하나만큼은 확실하다 \n모든 글은 더미데이터임",
+            "timestamp": "07/25 21:04",
+            "vote": 20,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        }
+    ]
+}

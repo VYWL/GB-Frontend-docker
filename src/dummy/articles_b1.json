@@ -1,0 +1,54 @@
+{
+    "boardName": "자유게시판",
+    "boardID": 1,
+    "data": [
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "제발 ㅠㅠ",
+            "content": "2학기 다니면 시간표 이렇게는 안되겠죠..?",
+            "timestamp": "07/26 01:45",
+            "vote": 0,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 2,
+            "title": "듣거라",
+            "content": "자유 게시판은 제품 개발이 접수한다",
+            "timestamp": "07/25 21:04",
+            "vote": 20,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 3,
+            "title": "봉사활동",
+            "content": "봉사활동 하고싶은데 ㅇㄷ 신청해야 할까?",
+            "timestamp": "07/25 20:02",
+            "vote": 0,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 4,
+            "title": "제목은 모르겠는데",
+            "content": "글 내용은 최대 80자까지만 가져와서 렌더링 하면 된답니다.",
+            "timestamp": "07/25 16:37",
+            "vote": 2,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        }
+    ]
+}

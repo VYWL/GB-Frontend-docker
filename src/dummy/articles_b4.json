@@ -1,0 +1,30 @@
+{
+    "boardName": "트랙별게시판",
+    "boardID": 4,
+    "data": [
+        {
+            "boardID": 4,
+            "articleID": 1,
+            "title": "늦게자서 그런지 아침이 힘들어",
+            "content": "히히 아침수업 힘들당",
+            "timestamp": "07/26 01:45",
+            "vote": 20,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 4,
+            "articleID": 2,
+            "title": "아니",
+            "content": "이상한 친구들 제발 따로 게시판 만들어라 엉?? ^^;;;",
+            "timestamp": "07/25 21:04",
+            "vote": 5,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        }
+    ]
+}

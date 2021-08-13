@@ -1,0 +1,54 @@
+{
+    "type": "recent",
+    "count": 4,
+    "data": [
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "다음주 과제 미리 확인하는법",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": "07/25 23:36",
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "필기내용 같이 공유하실 분",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": "07/25 21:48",
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "다음주 과제 미리 확인하는법",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": "07/25 21:36",
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "필기내용 같이 공유하실 분",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": "07/25 20:48",
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        }
+    ]
+}

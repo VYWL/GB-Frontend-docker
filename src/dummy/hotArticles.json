@@ -1,0 +1,30 @@
+{
+    "type": "hot",
+    "count": 2,
+    "data": [
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "BoB 공식 홈피를 확인해봤습니다",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": 0,
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        },
+        {
+            "boardID": 1,
+            "articleID": 1,
+            "title": "BoB 공식 홈피를 확인해봤습니다",
+            "content": "정말 대단하신 멘토분들이 보안 전문가 양성을 위해 힘써주고 계십니다",
+            "timestamp": 0,
+            "vote": 31,
+            "isAnony": true,
+            "writer": "",
+            "password": "",
+            "isDel": false
+        }
+    ]
+}
