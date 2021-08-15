@@ -3,7 +3,7 @@ import Comment from './Comment';
 import ArticleComponent from './ArticleComponent';
 import ArticleWriteForm from '../Articles/ArticleWriteForm';
 
-import useSWR, { SWRConfig } from 'swr';
+import useSWR from 'swr';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 
@@ -17,10 +17,9 @@ const OneArticle = ({ match }) => {
 
     const goListHref = `/board/${bID}`;
 
-    // TODO : Hook으로 변경
     // const getJSON = ;
-    const { error: article_ERR, data: articleData } = useSWR(`${ARTICLE_ENDPOINT}/${articleID}`);
-    const { error: comment_ERR, data: commentData } = useSWR(`${COMMENT_ENDPOINT}/${articleID}`);
+    const { error: article_ERR, data: articleData } = useSWR(`${ARTICLE_ENDPOINT}/${articleID}/`);
+    const { error: comment_ERR, data: commentData } = useSWR(`${COMMENT_ENDPOINT}/${articleID}/`);
 
     const handleArticleData = () => {
         const data = articleData;
@@ -50,8 +49,6 @@ const OneArticle = ({ match }) => {
             boardid: data.boardid,
         };
 
-        console.log(commentData);
-
         return returnData;
     };
 
@@ -60,19 +57,23 @@ const OneArticle = ({ match }) => {
 
         if (commentData.detail === 'Not found.') return [];
 
-        const tempList = commentData.map((elem, idx) => {
+        const tempList = commentData.map(elem => {
             return {
                 commentID: elem.commentid,
                 writer: elem.isanony ? '익명' : elem.writer,
                 content: elem.content,
                 timestamp: getFormattedTime(elem.timestamp),
                 isReply: elem.isreply,
+                isDel: elem.isdel,
                 isLast: false,
                 vote: elem.vote,
+                articleid: elem.articleid,
             };
         });
 
         const returnList = arrangeComments(tempList);
+
+        // console.table(returnList);
 
         return returnList;
     };
@@ -83,29 +84,27 @@ const OneArticle = ({ match }) => {
     };
 
     return (
-        <SWRConfig value={{ fetcher: url => fetch(url).then(_ => _.json()) }}>
-            <div className='wrap articles'>
+        <div className='wrap articles'>
+            {isArticleEditMode ? (
+                <ArticleWriteForm isEditMode boardID={bID} articleID={articleID} setEditmode={setArticleEditmode} />
+            ) : (
+                <article>
+                    <ArticleComponent {...handleArticleData()} setEditmode={setArticleEditmode} />
+                    <Comment articleID={articleID} commentList={handleCommentData()} />
+                </article>
+            )}
+            <div class='pagination'>
                 {isArticleEditMode ? (
-                    <ArticleWriteForm isEditMode />
+                    <a class='cancel' onClick={handleClick}>
+                        글 수정 취소
+                    </a>
                 ) : (
-                    <article>
-                        <ArticleComponent {...handleArticleData()} setEditmode={setArticleEditmode} />
-                        <Comment commentList={handleCommentData()} />
-                    </article>
+                    <a id='goListButton' class='list' href={goListHref}>
+                        글 목록
+                    </a>
                 )}
-                <div class='pagination'>
-                    {isArticleEditMode ? (
-                        <a class='cancel' onClick={handleClick}>
-                            글 수정 취소
-                        </a>
-                    ) : (
-                        <a id='goListButton' class='list' href={goListHref}>
-                            글 목록
-                        </a>
-                    )}
-                </div>
             </div>
-        </SWRConfig>
+        </div>
     );
 };
 
@@ -123,7 +122,6 @@ const arrangeComments = tempList => {
         const nowItem = tempList[i];
 
         if (nowItem.isReply) {
-            childFlag = true;
             grp.childComment.push(nowItem);
             continue;
         }
@@ -133,20 +131,19 @@ const arrangeComments = tempList => {
                 parentComment: grp.parentComment,
                 childComment: grp.childComment.map(elem => elem),
             });
-
             grp.parentComment = '';
             grp.childComment = [];
-            childFlag = false;
         }
 
-        grp.parentComment = tempList[i];
+        grp.parentComment = nowItem;
+        childFlag = true;
+    }
 
-        if (i === tempList.length - 1) {
-            returnList.push({
-                parentComment: grp.parentComment,
-                childComment: grp.childComment.map(elem => elem),
-            });
-        }
+    if (tempList.length) {
+        returnList.push({
+            parentComment: grp.parentComment,
+            childComment: grp.childComment.map(elem => elem),
+        });
     }
 
     return returnList;

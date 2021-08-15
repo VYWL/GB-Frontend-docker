@@ -1,7 +1,10 @@
+import { COMMENT_ENDPOINT } from '@Functions/';
+import { fetchData } from '@Hooks/';
+import moment from 'moment';
 import { useState } from 'react';
 
 const CommentWriteForm = props => {
-    const { isChildReply } = props;
+    const { parentcid = 0, isChildReply, articleID = 0 } = props;
     const [commentInfo, setInfo] = useState({
         content: '',
         password: '',
@@ -35,6 +38,46 @@ const CommentWriteForm = props => {
         });
     };
 
+    const handleSubmit = async e => {
+        e.preventDefault();
+
+        if (articleID === 0) {
+            alert('유효하지 않은 게시글입니다.');
+            return;
+        }
+
+        if (commentInfo.password === '') {
+            alert('비밀번호를 설정해주세요.');
+            return;
+        }
+
+        if (commentInfo.content === '') {
+            alert('댓글/대댓글 내용을 적어주세요.');
+            return;
+        }
+
+        // TODO :: Login 구현시 writer 넣기
+        const submitData = {
+            content: commentInfo.content,
+            timestamp: moment(new Date()).add(9, 'h').format(),
+            writer: 'User',
+            parentcid: parentcid,
+            password: commentInfo.password,
+            vote: 0,
+            isdel: false,
+            isanony: commentInfo.isAnony,
+            isreply: isChildReply,
+            isvisible: true,
+            articleid: articleID,
+        };
+
+        const url = `${COMMENT_ENDPOINT}/`;
+
+        const response = await fetchData('post', url, submitData);
+
+        window.location.reload();
+    };
+
     return (
         <form class={commentMode}>
             <input
@@ -48,7 +91,7 @@ const CommentWriteForm = props => {
             />
             <ul class='option'>
                 <li title='익명' class={anonymClassNm} onClick={handleClick}></li>
-                <li title='완료' class='submit'></li>
+                <li title='완료' class='submit' onClick={handleSubmit}></li>
             </ul>
             {true && (
                 <>

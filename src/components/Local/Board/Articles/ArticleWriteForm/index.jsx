@@ -1,7 +1,19 @@
 import { useState } from 'react';
+import { ARTICLE_ENDPOINT } from '@Functions';
+import { fetchData } from '@Hooks';
+import moment from 'moment';
 
 const ArticleWriteForm = props => {
-    const { isEditMode = false, articleID = 0, title = '', content = '', isAnonym = false } = props;
+    const {
+        isEditMode = false,
+        boardID = 0,
+        articleID = 0,
+        title = '',
+        content = '',
+        isAnonym = false,
+        setEditmode = () => {},
+    } = props;
+
     const [articleInfo, setInfo] = useState({
         title: title,
         password: '',
@@ -10,17 +22,53 @@ const ArticleWriteForm = props => {
     });
     const anonymClassNm = articleInfo.isAnonym ? 'anonym active' : 'anonym';
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
 
         // 암호화 처리 해야함
-        // const password = document.querySelector('input.password').value;
+        const password = document.querySelector('input.password').value;
 
-        // console.log({
-        //     ...articleInfo,
-        //     key: 'secretKey',
-        //     password: '*****',
-        // });
+        if (isEditMode) {
+            const submitData = {
+                ...articleInfo,
+                articleID,
+                password: password,
+            };
+
+            const url = `${ARTICLE_ENDPOINT}/${articleID}/`;
+            const isSuccess = await fetchData('put', url, submitData);
+
+            if (isSuccess.msg === 'success') {
+                alert('글이 수정되었습니다.');
+                setEditmode(false);
+            } else {
+                alert('비밀번호가 일치하지 않습니다.');
+            }
+
+            return;
+        }
+
+        const submitData = {
+            ...articleInfo,
+            writer: 'User',
+            boardid: boardID,
+            password: password,
+            timestamp: moment(new Date()).add(9, 'h').format(),
+            vote: 0,
+            unlike: 0,
+            commentcount: 0,
+        };
+
+        const url = `${ARTICLE_ENDPOINT}/`;
+        const isSuccess = fetchData('post', url, submitData);
+
+        console.log(isSuccess);
+
+        if (isSuccess) {
+            alert('글이 등록되었습니다.');
+            setEditmode(false);
+            window.location.reload();
+        }
     };
 
     const handleChange = e => {
@@ -32,9 +80,21 @@ const ArticleWriteForm = props => {
         });
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         // 삭제 관련 POST
-        // console.log('삭제');
+
+        const url = `${ARTICLE_ENDPOINT}/${articleID}/`;
+
+        const submitData = {
+            password: articleInfo.password,
+        };
+
+        const response = await fetchData('delete', url, submitData);
+
+        if (response.msg === 'success') {
+            alert('글이 삭제되었습니다.');
+            window.location.href = `/board/${boardID}`;
+        }
     };
 
     return (

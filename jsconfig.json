@@ -6,7 +6,8 @@
             "@Pages/*": ["./src/pages/*"],
             "@Components/*": ["./src/components"],
             "@Dummy/*": ["./src/dummy/*"],
-            "@Functions/*": ["./src/functions/*"]
+            "@Functions/*": ["./src/functions/*"],
+            "@Hooks/*": ["./src/hooks/*"]
         }
     }
 }

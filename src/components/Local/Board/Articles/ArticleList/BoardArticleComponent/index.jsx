@@ -3,20 +3,18 @@ const BoardArticleComponent = props => {
         title,
         content,
         timestamp,
-        isAnony = false,
-        writerNm = 'user',
+        writer,
         vote,
         comment,
-        articleID = 0,
-        boardID,
+        articleid = 0,
+        boardid,
         boardNm = '',
         articleType = 1, // 1 : 일반게, 2 : hot게
         more = false,
     } = props;
 
-    const boardHref = `/board/${boardID}`;
-    const articleHref = `/board/${boardID}/v/${articleID}`;
-    const writer = isAnony ? '익명' : writerNm;
+    const boardHref = `/board/${boardid}`;
+    const articleHref = `/board/${boardid}/v/${articleid}`;
 
     switch (articleType) {
         case 1:

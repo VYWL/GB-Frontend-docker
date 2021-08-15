@@ -9,9 +9,8 @@
 -   [x] React 앱 패키징 및 Nginx 서버 구성
 -   [x] Nginx + docker 이미지 수정 및 컨테이너화
 -   [x] 임시 서버에서 프론트 서버로그 ELK 연동 테스트
--   [ ] RESTful API로 데이터 Fetch (미완)
--   [ ] Back-end와의 동기화 (미완)
--   [x] ELK Stack과 Log 연동 (미완)
+-   [x] RESTful API로 데이터 Fetch
+-   [x] Back-end와의 동기화
 
 ### 사용 방법
 

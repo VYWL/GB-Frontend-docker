@@ -11,7 +11,7 @@ const Articles = ({ match }) => {
 
     return (
         <div className='wrap articles'>
-            {writeMode ? <ArticleWriteForm /> : <ArticleWritePlaceHolder setWriteMode={setWriteMode} />}
+            {writeMode ? <ArticleWriteForm boardID={bID} /> : <ArticleWritePlaceHolder setWriteMode={setWriteMode} />}
 
             <ArticleList bid={bID} pageNum={page} />
             <div className='clearBothOnly'></div>

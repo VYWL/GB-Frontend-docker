@@ -1,13 +1,38 @@
+import useSWR from 'swr';
 import BoardArticleComponent from './BoardArticleComponent';
 
-// Dummy
-// 지금은 그냥 예시용으로, 1개의 더미 사용
-import b1_articleList from '@Dummy/articles_b1.json';
+import { getFormattedTime, ARTICLE_ENDPOINT } from '@Functions/';
 
 const ArticleList = props => {
     const { bid } = props;
 
-    const boardArticleList = b1_articleList['data'].map(elem => <BoardArticleComponent {...elem} />);
+    // TODO :: backend 보드별 엔드포인트 만들어야함.
+    const { data: articleList } = useSWR(`${ARTICLE_ENDPOINT}`);
+
+    const handleArticleList = () => {
+        if (!articleList) return [];
+
+        // console.table(articleList);
+
+        // TODO :: 댓글수 불러오는 거 해야함.
+        const returnList = articleList.map(data => {
+            return {
+                articleid: data.articleid,
+                title: data.title,
+                content: data.content,
+                timestamp: getFormattedTime(data.timestamp),
+                vote: data.vote,
+                unlike: data.unlike,
+                comment: data.commentcount,
+                writer: data.isanony ? '익명' : data.writer,
+                boardid: data.boardid,
+            };
+        });
+
+        return returnList;
+    };
+
+    const boardArticleList = handleArticleList().map(elem => <BoardArticleComponent {...elem} />);
 
     return <>{boardArticleList}</>;
 };

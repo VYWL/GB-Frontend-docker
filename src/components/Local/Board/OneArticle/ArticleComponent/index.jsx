@@ -3,7 +3,6 @@ const ArticleComponent = props => {
 
     const formattedTime = timestamp;
 
-    // TODO :: 수정버튼 누르면 writeForm
     const handleClickToEdit = () => {
         setEditmode(p => !p);
     };
