@@ -5,7 +5,8 @@
             "@Styles/*": ["./src/css/*"],
             "@Pages/*": ["./src/pages/*"],
             "@Components/*": ["./src/components"],
-            "@Dummy/*": ["./src/dummy/*"]
+            "@Dummy/*": ["./src/dummy/*"],
+            "@Functions/*": ["./src/functions/*"]
         }
     }
 }

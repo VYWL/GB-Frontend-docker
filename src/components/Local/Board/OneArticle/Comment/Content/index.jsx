@@ -24,11 +24,11 @@ const CommentComponent = props => {
     const writerName = isWriter ? `${writer}(글쓴이)` : writer;
 
     // 대댓글 작성모드인 경우 아래 false를 true로
-    const replyWriteMode = isWriteMode && isReply && isLast;
+    const replyWriteMode = isWriteMode && isLast;
 
-    // 로그인이 없다면, 글쓴이인지 확인하는 과정은?
-    // 삭제 로직은? 👉 모달로 처리할듯
-    // 공감 업데이트는? 신고수는?
+    // 로그인이 없다면, 글쓴이인지 확인하는 과정은? 👉 몰라요
+
+    // 공감 업데이트는? 신고수는? 👉 할거에요
 
     // 댓글 업데이트시, child는 parent ID를 알아야해
 
@@ -45,7 +45,7 @@ const CommentComponent = props => {
                     )}
 
                     <li class='commentvote'>공감</li>
-                    <li class='abuse'>신고</li>
+                    <li class='abuse'>비공감</li>
                     <li class='delete'>삭제</li>
                 </ul>
                 <hr />
@@ -58,7 +58,7 @@ const CommentComponent = props => {
                 </ul>
             </article>
 
-            {replyWriteMode && <CommentWriteForm isChildReply={isReply} />}
+            {replyWriteMode && <CommentWriteForm isChildReply={true} />}
         </>
     );
 };
