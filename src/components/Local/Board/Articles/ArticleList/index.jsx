@@ -12,9 +12,6 @@ const ArticleList = props => {
     const handleArticleList = () => {
         if (!articleList) return [];
 
-        // console.table(articleList);
-
-        // TODO :: 댓글수 불러오는 거 해야함.
         const returnList = articleList.map(data => {
             return {
                 articleid: data.articleid,
@@ -26,6 +23,9 @@ const ArticleList = props => {
                 comment: data.commentcount,
                 writer: data.isanony ? '익명' : data.writer,
                 boardid: data.boardid,
+                fileCount: data.filecount,
+                imageCount: data.imagecount,
+                thumbnail: data.thumbnail,
             };
         });
 

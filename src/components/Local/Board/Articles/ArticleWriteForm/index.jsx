@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ARTICLE_ENDPOINT } from '@Functions';
-import { fetchData } from '@Hooks';
+import { fetchData, uploadFiles } from '@Hooks';
 import moment from 'moment';
+import { UPLOAD_ENDPOINT } from '@Functions/';
+import { formatBytes } from '@Functions/';
 
 const ArticleWriteForm = props => {
     const {
@@ -12,6 +14,8 @@ const ArticleWriteForm = props => {
         content = '',
         isAnonym = false,
         setEditmode = () => {},
+        initImageList = [],
+        initFileList = [],
     } = props;
 
     const [articleInfo, setInfo] = useState({
@@ -20,27 +24,73 @@ const ArticleWriteForm = props => {
         content: content,
         isAnonym: isAnonym,
     });
+
+    const [imageList, setImageList] = useState(initImageList);
+    const [fileList, setFileList] = useState(initFileList);
+
+    useEffect(() => {
+        setImageList(initImageList);
+        setFileList(initFileList);
+    }, []);
+
     const anonymClassNm = articleInfo.isAnonym ? 'anonym active' : 'anonym';
+
+    const formFileList = (list, new_articleid = 0) => {
+        return list
+            .map(elem => {
+                const { fileName: filename, size: filesize, file, isDel: isdel, isNew: isnew, fID: fid } = elem;
+                const aID = articleID === 0 ? new_articleid : articleID;
+
+                if (isnew && isdel) return null;
+                return { filename, filesize, file, isdel, isnew, fid, articleid: aID };
+            })
+            .filter(e => e);
+    };
+
+    const sendAttachedFiles = async (new_articleid = 0) => {
+        const uploadImageList = formFileList(imageList, new_articleid);
+        const uploadFileList = formFileList(fileList, new_articleid);
+        await uploadFiles(`${UPLOAD_ENDPOINT}/image`, uploadImageList);
+        await uploadFiles(`${UPLOAD_ENDPOINT}/file`, uploadFileList);
+    };
 
     const handleSubmit = async e => {
         e.preventDefault();
 
+        const password = articleInfo.password;
+        if (password === '') {
+            alert('비밀번호를 입력해 주세요.');
+            return;
+        }
+
+        if (articleInfo.content === '') {
+            alert('글 내용을 입력해 주세요.');
+            return;
+        }
+
+        if (articleInfo.title === '') {
+            alert('글 제목을 입력해 주세요.');
+            return;
+        }
+
         // 암호화 처리 해야함
-        const password = document.querySelector('input.password').value;
 
         if (isEditMode) {
             const submitData = {
                 ...articleInfo,
                 articleID,
-                password: password,
             };
 
             const url = `${ARTICLE_ENDPOINT}/${articleID}/`;
             const isSuccess = await fetchData('put', url, submitData);
 
             if (isSuccess.msg === 'success') {
+                await sendAttachedFiles(isSuccess['articleid']);
+
                 alert('글이 수정되었습니다.');
                 setEditmode(false);
+
+                window.location.reload();
             } else {
                 alert('비밀번호가 일치하지 않습니다.');
             }
@@ -60,14 +110,17 @@ const ArticleWriteForm = props => {
         };
 
         const url = `${ARTICLE_ENDPOINT}/`;
-        const isSuccess = fetchData('post', url, submitData);
-
+        const isSuccess = await fetchData('post', url, submitData);
         console.log(isSuccess);
 
-        if (isSuccess) {
-            alert('글이 등록되었습니다.');
+        if (isSuccess['msg'] === 'success') {
+            await sendAttachedFiles(isSuccess['articleid']);
+
             setEditmode(false);
+
             window.location.reload();
+        } else {
+            alert('비밀번호가 일치하지 않습니다.');
         }
     };
 
@@ -81,8 +134,6 @@ const ArticleWriteForm = props => {
     };
 
     const handleDelete = async () => {
-        // 삭제 관련 POST
-
         const url = `${ARTICLE_ENDPOINT}/${articleID}/`;
 
         const submitData = {
@@ -94,7 +145,45 @@ const ArticleWriteForm = props => {
         if (response.msg === 'success') {
             alert('글이 삭제되었습니다.');
             window.location.href = `/board/${boardID}`;
+        } else {
+            alert('비밀번호가 다릅니다.');
         }
+    };
+
+    const handleFileInput = async e => {
+        e.preventDefault();
+
+        const length = fileList.filter(e => !e.idDel).length;
+        if (length >= 5) {
+            alert('첨부파일은 5개를 초과할 수 없습니다.');
+            return;
+        }
+
+        if (e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+
+        setFileList(p => {
+            return [
+                ...p,
+                {
+                    fileName: file.name,
+                    fileURL: '',
+                    size: file.size,
+                    fID: 0,
+                    isDel: false,
+                    isNew: true,
+                    file: file,
+                },
+            ];
+        });
+    };
+
+    const attachFunctionParams = {
+        imageList: imageList,
+        setImageList: setImageList,
+        fileList: fileList,
+        setFileList: setFileList,
     };
 
     return (
@@ -106,6 +195,7 @@ const ArticleWriteForm = props => {
                     placeholder='글 제목'
                     className='title'
                     onChange={handleChange}
+                    value={articleInfo.title}
                 />
                 <input
                     name='password'
@@ -114,6 +204,7 @@ const ArticleWriteForm = props => {
                     placeholder='글 비밀번호'
                     className='password'
                     onChange={handleChange}
+                    value={articleInfo.password}
                 />
             </p>
             <p>
@@ -122,12 +213,17 @@ const ArticleWriteForm = props => {
                     placeholder={_placeolder}
                     className='smallplaceholder large'
                     onChange={handleChange}
+                    value={articleInfo.content}
                 ></textarea>
             </p>
+
+            <AttachedThings {...attachFunctionParams} />
+
             <div class='clearBothOnly'></div>
             <ul className='option'>
-                {/* <li title='해시태그' className='hashtag'></li> */}
-                {/* <li title='첨부' className='attach'></li> */}
+                <input type='file' id='attachfile' onChange={handleFileInput} className='attachFile' />
+                <label for='attachfile' className='attachNewFile' />
+
                 {isEditMode && <li title='삭제' className='delete' onClick={handleDelete}></li>}
                 <li title='완료' className='submit' onClick={handleSubmit}></li>
                 <li
@@ -167,3 +263,122 @@ const _placeolder = `밥브리타임은 누구나 기분 좋게 참여할 수 �
 - 욕설, 비하, 차별, 혐오, 자살, 폭력 관련 내용을 포함한 게시물 작성 행위
 - 음란물, 성적 수치심을 유발하는 행위
 - 스포일러, 공포, 속임, 놀라게 하는 행위 `;
+
+const AttachedThings = attachFunctionParams => {
+    const { fileList } = attachFunctionParams;
+    const isFileListVisible = fileList.filter(e => !e.isDel).length !== 0;
+
+    return (
+        <>
+            <ImageList {...attachFunctionParams} />
+            {isFileListVisible && <FileList {...attachFunctionParams} />}
+        </>
+    );
+};
+
+const ImageList = attachFunctionParams => {
+    const { imageList, setImageList } = attachFunctionParams;
+    const handleImageInput = e => {
+        e.preventDefault();
+
+        const length = imageList.filter(e => !e.isDel).length;
+        if (length >= 10) {
+            alert('이미지는 최대 10장까지 업로드할 수 있습니다.');
+            return;
+        }
+
+        if (e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setImageList(p => [
+                ...p,
+                {
+                    fileName: file.name,
+                    size: file.size,
+                    previewURL: reader.result,
+                    downloadURL: '',
+                    isDel: false,
+                    isNew: true,
+                    fID: 0,
+                    file: file,
+                },
+            ]);
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    const handleImageClick = idx => {
+        if (window.confirm('해당 이미지를 삭제하시겠습니까?') === false) return;
+
+        setImageList(p => {
+            p[idx].isDel = true;
+            const returnObj = p.map(e => e);
+            return returnObj;
+        });
+    };
+    return (
+        <ol class='thumbnails' style={{ display: 'block' }}>
+            {imageList
+                .map((elem, idx) => {
+                    const { previewURL, isDel } = elem;
+
+                    if (isDel) return null;
+
+                    return (
+                        <li
+                            class='thumbnail attached'
+                            style={{
+                                backgroundImage: `url("${previewURL}")`,
+                            }}
+                            onClick={() => handleImageClick(idx)}
+                        />
+                    );
+                })
+                .filter(e => e)}
+            <input
+                type='file'
+                id='attachImage'
+                onChange={handleImageInput}
+                style={{ display: 'none' }}
+                accept='image/gif, image/jpeg, image/png, image/bmp, image/jpg'
+            />
+            <label for='attachImage' className='attachNewImage' />
+        </ol>
+    );
+};
+
+const FileList = attachFunctionParams => {
+    const { fileList, setFileList } = attachFunctionParams;
+
+    const handleClick = idx => {
+        if (window.confirm('해당 첨부파일을 삭제하시겠습니까?') === false) return;
+
+        setFileList(p => {
+            p[idx].isDel = true;
+            const returnObj = p.map(e => e);
+            return returnObj;
+        });
+    };
+    return (
+        <ol class='files'>
+            {fileList
+                .map((elem, idx) => {
+                    const { size: length, fileName: rawName, fileURL, isDel } = elem;
+                    if (isDel) return null;
+
+                    const fileName = rawName.length > 6 ? `${rawName.slice(0, 7)}...` : rawName;
+                    const fileSize = formatBytes(length, 2);
+                    return (
+                        <li class='file' onClick={() => handleClick(idx)}>
+                            {`${fileName}`} <br /> {`(${fileSize})`}
+                        </li>
+                    );
+                })
+                .filter(e => e)}
+        </ol>
+    );
+};

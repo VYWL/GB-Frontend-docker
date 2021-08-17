@@ -7,7 +7,8 @@ import useSWR from 'swr';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { getFormattedTime, ARTICLE_ENDPOINT, COMMENT_ENDPOINT } from '@Functions';
+import { arrangeComments, getFormattedTime, ARTICLE_ENDPOINT, COMMENT_ENDPOINT } from '@Functions';
+import { UPLOAD_ENDPOINT, MEDIA_ENDPOINT } from '@Functions/';
 
 const OneArticle = ({ match }) => {
     const { bID, articleID } = match.params;
@@ -17,9 +18,10 @@ const OneArticle = ({ match }) => {
 
     const goListHref = `/board/${bID}`;
 
-    // const getJSON = ;
     const { error: article_ERR, data: articleData } = useSWR(`${ARTICLE_ENDPOINT}/${articleID}/`);
     const { error: comment_ERR, data: commentData } = useSWR(`${COMMENT_ENDPOINT}/${articleID}/`);
+    const { error: load_img_ERR, data: imageData } = useSWR(`${UPLOAD_ENDPOINT}/image/${articleID}`);
+    const { error: load_file_ERR, data: fileData } = useSWR(`${UPLOAD_ENDPOINT}/file/${articleID}`);
 
     const handleArticleData = () => {
         const data = articleData;
@@ -47,6 +49,63 @@ const OneArticle = ({ match }) => {
             comment: commentCount,
             writer: data.isanony ? '익명' : data.writer,
             boardid: data.boardid,
+            fileCount: data.filecount,
+            imageCount: data.imagecount,
+            thumbnail: data.thumbnail,
+        };
+
+        return returnData;
+    };
+
+    const handleImageData = () => {
+        const data = imageData;
+        if (!data) return [];
+        const returnList = data.map(elem => {
+            const { fid, uuid: code, filename, filesize, timestamp } = elem;
+            return {
+                fileName: filename,
+                size: filesize,
+                previewURL: `${UPLOAD_ENDPOINT}/image/${code}`,
+                downloadURL: `${UPLOAD_ENDPOINT}/image/${code}`,
+                isDel: false,
+                isNew: false,
+                fID: fid,
+                file: null,
+            };
+        });
+
+        return returnList;
+    };
+
+    const handleFileData = () => {
+        const data = fileData;
+
+        if (!data) return [];
+
+        const returnList = data.map(elem => {
+            const { fid, uuid: code, filename, filesize, timestamp } = elem;
+            return {
+                fileName: filename,
+                size: filesize,
+                fileURL: `${UPLOAD_ENDPOINT}/file/${code}`,
+                isDel: false,
+                isNew: false,
+                fID: fid,
+                file: null,
+            };
+        });
+
+        return returnList;
+    };
+
+    const editFormInitialData = () => {
+        const data = articleData;
+        if (!data) return {};
+
+        const returnData = {
+            title: data.title,
+            content: data.content,
+            isAnonym: data.isanony,
         };
 
         return returnData;
@@ -73,8 +132,6 @@ const OneArticle = ({ match }) => {
 
         const returnList = arrangeComments(tempList);
 
-        // console.table(returnList);
-
         return returnList;
     };
 
@@ -86,10 +143,23 @@ const OneArticle = ({ match }) => {
     return (
         <div className='wrap articles'>
             {isArticleEditMode ? (
-                <ArticleWriteForm isEditMode boardID={bID} articleID={articleID} setEditmode={setArticleEditmode} />
+                <ArticleWriteForm
+                    isEditMode
+                    {...editFormInitialData()}
+                    initImageList={handleImageData()}
+                    initFileList={handleFileData()}
+                    boardID={bID}
+                    articleID={articleID}
+                    setEditmode={setArticleEditmode}
+                />
             ) : (
                 <article>
-                    <ArticleComponent {...handleArticleData()} setEditmode={setArticleEditmode} />
+                    <ArticleComponent
+                        {...handleArticleData()}
+                        initImageList={handleImageData()}
+                        initFileList={handleFileData()}
+                        setEditmode={setArticleEditmode}
+                    />
                     <Comment articleID={articleID} commentList={handleCommentData()} />
                 </article>
             )}
@@ -109,42 +179,3 @@ const OneArticle = ({ match }) => {
 };
 
 export default OneArticle;
-
-const arrangeComments = tempList => {
-    const returnList = [];
-
-    let childFlag = false;
-    let grp = {
-        parentComment: '',
-        childComment: [],
-    };
-    for (let i = 0; i < tempList.length; ++i) {
-        const nowItem = tempList[i];
-
-        if (nowItem.isReply) {
-            grp.childComment.push(nowItem);
-            continue;
-        }
-
-        if (childFlag) {
-            returnList.push({
-                parentComment: grp.parentComment,
-                childComment: grp.childComment.map(elem => elem),
-            });
-            grp.parentComment = '';
-            grp.childComment = [];
-        }
-
-        grp.parentComment = nowItem;
-        childFlag = true;
-    }
-
-    if (tempList.length) {
-        returnList.push({
-            parentComment: grp.parentComment,
-            childComment: grp.childComment.map(elem => elem),
-        });
-    }
-
-    return returnList;
-};

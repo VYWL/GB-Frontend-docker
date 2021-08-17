@@ -16,7 +16,7 @@ const Articles = ({ match }) => {
             <ArticleList bid={bID} pageNum={page} />
             <div className='clearBothOnly'></div>
 
-            <Pagenation bid={bID} pageNum={page} />
+            {/* <Pagenation bid={bID} pageNum={page} /> */}
         </div>
     );
 };

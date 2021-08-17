@@ -190,14 +190,49 @@
     overflow: hidden;
     opacity: 0;
 }
-#container > div.articles > form.write ol.thumbnails {
-    display: none;
+
+#container > div.articles > form.write ol {
+    display: flex;
     padding: 16px 12px 12px 16px;
     border-bottom: 1px solid #e3e3e3;
+    background-color: white;
 }
-#container > div.articles > form.write ol.thumbnails > li {
+
+#container > div.articles > form.write ol.files {
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+#container > div.articles > form.write ol.files > li.file {
+    line-height: 15px;
+    padding: 15px 20px 15px 30px;
+    background-image: url(https://media.discordapp.net/attachments/802076592825827332/876655513687953408/clip.png);
+}
+
+#container > div.articles > form.write ol.files > li {
+    margin-right: 4px;
+    border-radius: 8px;
+    color: #737373;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    background-repeat: no-repeat;
+    background-position: left 12px center;
+    background-size: 11px 11px;
+}
+
+#container > div.articles > form.write ol.files > li.morefile {
+    line-height: 30px;
+    padding: 15px 17px 15px 17px;
+    word-break: keep-all;
+}
+
+#container > div.articles > form.write ol.thumbnails > li,
+#container > div.articles > form.write ol.thumbnails > label {
     display: inline-block;
-    margin: 0 4px 4px 0;
+    margin: 0 4px 0px 0;
     width: 85px;
     height: 85px;
     border: 1px solid #d6d6d6;
@@ -210,12 +245,14 @@
 #container > div.articles > form.write ol.thumbnails > li.thumbnail.attached {
     background-size: cover;
 }
-#container > div.articles > form.write ol.thumbnails > li.new {
+#container > div.articles > form.write ol.thumbnails > label.attachNewImage {
     background: transparent url('https://everytime.kr/images/new/container.articles.write.thumbnails.new.png') no-repeat
         center center;
     background-size: 24px 24px;
 }
-#container > div.articles > form.write ul.option li {
+
+#container > div.articles > form.write ul.option li,
+#container > div.articles > form.write ul.option label {
     width: 40px;
     height: 40px;
     background-repeat: no-repeat;
@@ -227,10 +264,17 @@
     float: left;
     background-image: url('https://everytime.kr/images/new/container.articles.write.hashtag.png');
 }
-#container > div.articles > form.write ul.option li.attach {
+#container > div.articles > form.write ul.option label.attachNewFile {
     float: left;
     background-image: url('https://everytime.kr/images/new/container.articles.write.attach.png');
 }
+
+#container > div.articles > form.write ul.option input.attachFile {
+    display: none;
+    float: left;
+    background-image: url('https://everytime.kr/images/new/container.articles.write.attach.png');
+}
+
 #container > div.articles > form.write ul.option li.attach.active {
     background-image: url('https://everytime.kr/images/new/container.articles.write.attach.active.png');
 }
@@ -669,6 +713,12 @@
     color: #0ca5af;
     background-image: url('https://everytime.kr/images/new/container.articles.comment.png');
 }
+#container > div.articles > article ul.status li.files {
+    padding-left: 15px;
+    color: #00a82d;
+    background-image: url('https://media.discordapp.net/attachments/802076592825827332/876743120073654323/clip_green.png');
+}
+
 #container > div.articles > article ul.status li.scrap {
     padding-left: 15px;
     color: #ffcc1c;
@@ -704,6 +754,16 @@
 }
 #container > div.articles > article div.buttons span.posvote {
     background-image: url('https://everytime.kr/images/container.articles.buttons.posvote.png');
+}
+#container > div.articles > article div.buttons span.file {
+    line-height: 15px;
+    padding: 15px 20px 15px 30px;
+    background-image: url('https://media.discordapp.net/attachments/802076592825827332/876655513687953408/clip.png');
+}
+#container > div.articles > article div.buttons span.morefile {
+    line-height: 30px;
+    padding: 15px 17px 15px 17px;
+    word-break: keep-all;
 }
 #container > div.articles > article div.buttons span.scrap {
     background-image: url('https://everytime.kr/images/container.articles.buttons.scrap.png');
@@ -900,6 +960,43 @@
     max-width: 100%;
     max-height: 100%;
 }
+
+#moreFilesForm.modal {
+    display: block;
+    padding: 25px;
+    width: 400px;
+    box-sizing: border-box;
+
+    margin-top: -188px;
+    margin-left: -200px;
+}
+
+#moreFilesForm.modal a.close {
+    display: block;
+    float: right;
+    width: 20px;
+    height: 20px;
+    background: transparent url('https://everytime.kr/images/new/container.modal.close.png') no-repeat center center;
+    background-size: 15px 15px;
+    cursor: pointer;
+}
+
+#moreFilesForm.modal h3 {
+    margin-bottom: 15px;
+    color: #292929;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+#moreFilesForm.modal ul > li > a {
+    display: block;
+    line-height: 40px;
+    border-bottom: 1px solid #e3e3e3;
+    color: #292929;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * *  /  pc only  /  * * * * * * * * * * * * * * * * * * * * * * * * */
 
 @media only screen and (min-width: 641px) {
@@ -943,6 +1040,9 @@
     #container > div.articles > form.write ol.thumbnails::-webkit-scrollbar {
         display: none;
     }
+    #container > div.articles > form.write ol.files::-webkit-scrollbar {
+        display: none;
+    }
     #container > div.articles > ul.hashtags {
         white-space: nowrap;
         overflow-x: scroll;
@@ -965,7 +1065,20 @@
         overflow-x: scroll;
         overflow-y: hidden;
     }
+    #container > div.articles > article div.buttons {
+        white-space: nowrap;
+        overflow-x: scroll;
+        overflow-y: hidden;
+    }
     #container > div.articles > article div.attaches.multiple::-webkit-scrollbar {
         display: none;
+    }
+    #moreFilesForm.modal {
+        width: 95%;
+        max-height: 95% !important;
+        overflow: auto;
+
+        margin-left: calc(-47.5%);
+        margin-top: -188px;
     }
 }

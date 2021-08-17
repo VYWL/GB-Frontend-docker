@@ -1,6 +1,5 @@
 import { COMMENT_ENDPOINT } from '@Functions/';
 import { fetchData } from '@Hooks/';
-import { useState } from 'react';
 import CommentWriteForm from '../CommentWriteForm';
 
 const CommentComponent = props => {
@@ -22,20 +21,14 @@ const CommentComponent = props => {
     const displayVoteCount = vote === 0 ? 'none' : '';
     const commentType = isReply ? 'child' : 'parent';
 
-    // 글 작성자인지를 체크하는 변수
+    // TODO :: 공감 비공감 구현
+    // TODO :: Writer를 알아내는 것 (로그인 구현 이후)
     const isWriter = false;
 
     const writerComment = !isDel ? (isWriter ? 'medium writer' : 'medium') : 'medium disabled';
     const writerName = !isDel ? (isWriter ? `${writer}(글쓴이)` : writer) : '(삭제)';
 
-    // 대댓글 작성모드인 경우 아래 false를 true로
     const replyWriteMode = isWriteMode && isLast;
-
-    // 로그인이 없다면, 글쓴이인지 확인하는 과정은? 👉 몰라요
-
-    // 공감 업데이트는? 신고수는? 👉 할거에요
-
-    // 댓글 업데이트시, child는 parent ID를 알아야해
 
     const handleDelete = async e => {
         e.preventDefault();
@@ -72,8 +65,8 @@ const CommentComponent = props => {
                             </li>
                         )}
 
-                        <li class='commentvote'>공감</li>
-                        <li class='abuse'>비공감</li>
+                        {/* <li class='commentvote'>공감</li>
+                        <li class='abuse'>비공감</li> */}
                         <li class='delete' onClick={handleDelete}>
                             삭제
                         </li>
